@@ -31,7 +31,7 @@ tcga-kirc-project/
 │   └── kirc_expression.tsv             # RNA-seq expression matrix (20,530 genes × 606 samples)
 ├── notebooks/
 │   ├── 00_data_exploration.ipynb          # Data load, shape inspection & patient ID alignment
-│   └── 03_survival_analysis_report.ipynb  # Full analysis report (main deliverable)
+│   └── 01_survival_analysis_report.ipynb  # Full analysis report (main deliverable)
 ├── outputs/
 │   └── results/                        # Pre-computed results (JSON / CSV)
 │       ├── cohort_summary.json
@@ -149,7 +149,7 @@ Open [http://localhost:8501](http://localhost:8501) in your browser.
 
 ```bash
 # Full analysis report (main deliverable — trains models, saves all outputs)
-jupyter notebook notebooks/03_survival_analysis_report.ipynb
+jupyter notebook notebooks/01_survival_analysis_report.ipynb
 
 # Data exploration (optional — load/inspect raw files, verify patient ID overlap)
 jupyter notebook notebooks/00_data_exploration.ipynb
