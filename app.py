@@ -1,15 +1,15 @@
 """
-TCGA KIRC Survival Analysis — Streamlit Dashboard
+TCGA KIRC Survival Analysis â€” Streamlit Dashboard
 ==================================================
 Single-page interactive dashboard for exploring the TCGA Kidney Renal
 Clear Cell Carcinoma (KIRC) survival analysis pipeline results.
 
 Sections:
-  1. Dataset Overview       — cohort statistics & demographics
-  2. Kaplan-Meier Curves    — overall and by cancer stage
-  3. Model Performance      — C-index comparison & Brier score
-  4. Gene Importance        — LASSO Cox & RSF top biomarkers
-  5. Risk Prediction Demo   — clinical input → predicted risk score
+  1. Dataset Overview       â€” cohort statistics & demographics
+  2. Kaplan-Meier Curves    â€” overall and by cancer stage
+  3. Model Performance      â€” C-index comparison & Brier score
+  4. Gene Importance        â€” LASSO Cox & RSF top biomarkers
+  5. Risk Prediction Demo   â€” clinical input â†’ predicted risk score
 
 Run with:  streamlit run app.py
 """
@@ -29,15 +29,15 @@ from lifelines.statistics import logrank_test
 
 warnings.filterwarnings("ignore")
 
-# ─── Page Configuration ──────────────────────────────────────────────────────
+# â”€â”€â”€ Page Configuration â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 st.set_page_config(
     page_title="TCGA KIRC Survival Analysis",
-    page_icon="🧬",
+    page_icon="https://img.icons8.com/color/96/dna-helix.png",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ─── Global Style ────────────────────────────────────────────────────────────
+# â”€â”€â”€ Global Style â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 COLORS = {
     "primary":   "#2c3e50",
     "accent":    "#3498db",
@@ -61,14 +61,14 @@ PLOTLY_LAYOUT = dict(
     plot_bgcolor="white",
 )
 
-# ─── Paths ───────────────────────────────────────────────────────────────────
+# â”€â”€â”€ Paths â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 ROOT       = Path(__file__).parent
 DATA_DIR   = ROOT / "data"
 RESULTS    = ROOT / "outputs" / "results"
 MODELS_DIR = ROOT / "outputs" / "models"
 
 
-# ─── Data Loaders ────────────────────────────────────────────────────────────
+# â”€â”€â”€ Data Loaders â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @st.cache_data(show_spinner=False)
 def load_results():
@@ -158,7 +158,7 @@ def load_models():
         return None, None
 
 
-# ─── KM Plotting Helper ───────────────────────────────────────────────────────
+# â”€â”€â”€ KM Plotting Helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def km_to_plotly(kmf: KaplanMeierFitter, name: str, color: str,
                  fig: go.Figure, show_ci: bool = True):
@@ -177,26 +177,32 @@ def km_to_plotly(kmf: KaplanMeierFitter, name: str, color: str,
         lower = ci.iloc[:, 0].values
         upper = ci.iloc[:, 1].values
         t_ci  = ci.index.values
+        # Convert hex (#rrggbb) → rgba for Plotly CI band
+        if color.startswith("#") and len(color) == 7:
+            r, g, b = int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16)
+            fill_color = f"rgba({r},{g},{b},0.12)"
+        elif color.startswith("rgb"):
+            fill_color = color.replace(")", ",0.12)").replace("rgb(", "rgba(")
+        else:
+            fill_color = "rgba(100,100,100,0.12)"
         fig.add_trace(go.Scatter(
             x=np.concatenate([t_ci, t_ci[::-1]]),
             y=np.concatenate([upper, lower[::-1]]),
             fill="toself",
-            fillcolor=color.replace(")", ", 0.12)").replace("rgb", "rgba")
-                if color.startswith("rgb")
-                else color + "20",
+            fillcolor=fill_color,
             line=dict(color="rgba(0,0,0,0)"),
             showlegend=False,
             hoverinfo="skip",
         ))
 
 
-# ─── Sidebar ─────────────────────────────────────────────────────────────────
+# â”€â”€â”€ Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 with st.sidebar:
     st.image(
         "https://www.cancer.gov/sites/g/files/xnygph186/files/styles/cgov_article/public/cgov_image"
         "/media_image/2022-04/kidneys-and-ureters-anatomy-1200px.jpg",
-        use_container_width=True,
+        width='stretch',
     ) if False else None  # skip external image fetch in offline env
 
     st.markdown("## 🧬 TCGA KIRC")
@@ -213,37 +219,37 @@ with st.sidebar:
 
     st.divider()
     st.caption("**Dataset:** TCGA-KIRC (GDC Portal)  \n"
-               "**Pipeline:** Cox PH · LASSO Cox · RSF · DeepSurv  \n"
+               "**Pipeline:** Cox PH Â· LASSO Cox Â· RSF Â· DeepSurv  \n"
                "**Metric:** Concordance Index (C-index)")
 
 
-# ─── Load Data ───────────────────────────────────────────────────────────────
+# â”€â”€â”€ Load Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-with st.spinner("Loading results…"):
+with st.spinner("Loading resultsâ€¦"):
     cohort_summary, model_comp, gene_imp, lasso_coef, rsf_imp, feat_info, model_res = load_results()
 
-with st.spinner("Loading clinical data…"):
+with st.spinner("Loading clinical dataâ€¦"):
     clinical = load_clinical()
 
 cph_model, scaler = load_models()
 
 
-# ─── Main Header ─────────────────────────────────────────────────────────────
+# â”€â”€â”€ Main Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 st.markdown(
-    "<h1 style='color:#2c3e50;margin-bottom:0'>TCGA KIRC — Survival Analysis Dashboard</h1>",
+    "<h1 style='color:#2c3e50;margin-bottom:0'>TCGA KIRC â€” Survival Analysis Dashboard</h1>",
     unsafe_allow_html=True,
 )
 st.markdown(
-    "<p style='color:#7f8c8d;margin-top:4px'>Kidney Renal Clear Cell Carcinoma · "
-    "Multi-model survival analysis · TCGA cohort</p>",
+    "<p style='color:#7f8c8d;margin-top:4px'>Kidney Renal Clear Cell Carcinoma Â· "
+    "Multi-model survival analysis Â· TCGA cohort</p>",
     unsafe_allow_html=True,
 )
 st.divider()
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# SECTION 1 — DATASET OVERVIEW
-# ═══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# SECTION 1 â€” DATASET OVERVIEW
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 if "Overview" in section:
     st.header("📊 Dataset Overview")
 
@@ -259,7 +265,7 @@ if "Overview" in section:
     st.markdown("---")
     col_l, col_r = st.columns(2)
 
-    # ── Vital status donut
+    # â”€â”€ Vital status donut
     with col_l:
         status_counts = clinical["event"].map({1: "Dead", 0: "Alive"}).value_counts()
         fig_vs = go.Figure(go.Pie(
@@ -276,9 +282,9 @@ if "Overview" in section:
             showlegend=True,
             **PLOTLY_LAYOUT,
         )
-        st.plotly_chart(fig_vs, use_container_width=True)
+        st.plotly_chart(fig_vs, width='stretch')
 
-    # ── Age distribution
+    # â”€â”€ Age distribution
     with col_r:
         if "age" in clinical.columns:
             age_vals = clinical["age"].dropna()
@@ -302,11 +308,11 @@ if "Overview" in section:
                 showlegend=False,
                 **PLOTLY_LAYOUT,
             )
-            st.plotly_chart(fig_age, use_container_width=True)
+            st.plotly_chart(fig_age, width='stretch')
 
     col_a, col_b = st.columns(2)
 
-    # ── Stage distribution
+    # â”€â”€ Stage distribution
     with col_a:
         if "stage" in clinical.columns:
             stage_order = ["Stage I", "Stage II", "Stage III", "Stage IV"]
@@ -330,9 +336,9 @@ if "Overview" in section:
                 showlegend=False,
                 **PLOTLY_LAYOUT,
             )
-            st.plotly_chart(fig_stage, use_container_width=True)
+            st.plotly_chart(fig_stage, width='stretch')
 
-    # ── Gender distribution
+    # â”€â”€ Gender distribution
     with col_b:
         if "gender" in clinical.columns:
             gdr = clinical["gender"].value_counts()
@@ -351,9 +357,9 @@ if "Overview" in section:
                 showlegend=False,
                 **PLOTLY_LAYOUT,
             )
-            st.plotly_chart(fig_gdr, use_container_width=True)
+            st.plotly_chart(fig_gdr, width='stretch')
 
-    # ── Survival time distribution
+    # â”€â”€ Survival time distribution
     st.markdown("#### Follow-up / Survival Time Distribution")
     time_dead    = clinical.loc[clinical["event"] == 1, "time"]
     time_censored = clinical.loc[clinical["event"] == 0, "time"]
@@ -373,18 +379,18 @@ if "Overview" in section:
         yaxis_title="Count",
         **PLOTLY_LAYOUT,
     )
-    st.plotly_chart(fig_time, use_container_width=True)
+    st.plotly_chart(fig_time, width='stretch')
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# SECTION 2 — KAPLAN-MEIER CURVES
-# ═══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# SECTION 2 â€” KAPLAN-MEIER CURVES
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 elif "Kaplan" in section:
     st.header("📈 Kaplan-Meier Survival Curves")
 
     tab1, tab2, tab3 = st.tabs(["Overall Survival", "By Cancer Stage", "Stage Comparison Table"])
 
-    # ── Overall KM
+    # â”€â”€ Overall KM
     with tab1:
         kmf = KaplanMeierFitter()
         kmf.fit(clinical["time"], event_observed=clinical["event"], label="Overall Survival")
@@ -401,20 +407,20 @@ elif "Kaplan" in section:
                              annotation_font=dict(color=COLORS["primary"]))
 
         fig_km.update_layout(
-            title="Overall Kaplan-Meier Survival Curve — TCGA KIRC",
+            title="Overall Kaplan-Meier Survival Curve â€” TCGA KIRC",
             xaxis_title="Time (days)",
             yaxis_title="Survival Probability",
             yaxis=dict(range=[0, 1.05]),
             **PLOTLY_LAYOUT,
         )
-        st.plotly_chart(fig_km, use_container_width=True)
+        st.plotly_chart(fig_km, width='stretch')
 
         col_l, col_r = st.columns(2)
         col_l.metric("Median Survival", f"{med:.0f} days" if not np.isinf(med) else "Not reached")
         col_r.metric("12-month survival est.",
                      f"{float(kmf.predict(365)):.1%}")
 
-    # ── KM by stage
+    # â”€â”€ KM by stage
     with tab2:
         if "stage" in clinical.columns:
             stage_order  = ["Stage I", "Stage II", "Stage III", "Stage IV"]
@@ -449,7 +455,7 @@ elif "Kaplan" in section:
                 legend=dict(x=0.75, y=0.95),
                 **PLOTLY_LAYOUT,
             )
-            st.plotly_chart(fig_stage_km, use_container_width=True)
+            st.plotly_chart(fig_stage_km, width='stretch')
 
             # Log-rank test Stage I vs IV
             mask_i  = clinical["stage"] == "Stage I"
@@ -464,7 +470,7 @@ elif "Kaplan" in section:
         else:
             st.warning("Stage information not available in the clinical data.")
 
-    # ── Comparison table
+    # â”€â”€ Comparison table
     with tab3:
         if "stage" in clinical.columns:
             summary_rows = []
@@ -485,26 +491,26 @@ elif "Kaplan" in section:
                     "3-year Survival": f"{float(kmf_t.predict(1095)):.1%}",
                     "5-year Survival": f"{float(kmf_t.predict(1825)):.1%}",
                 })
-            st.dataframe(pd.DataFrame(summary_rows), use_container_width=True, hide_index=True)
+            st.dataframe(pd.DataFrame(summary_rows), width='stretch', hide_index=True)
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# SECTION 3 — MODEL PERFORMANCE
-# ═══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# SECTION 3 â€” MODEL PERFORMANCE
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 elif "Model" in section:
     st.header("🏆 Model Performance")
 
     # Best model callout
     best_row = model_comp.loc[model_comp["C-index"].idxmax()]
     st.success(
-        f"**Best model: {best_row['Model']}** — C-index = **{best_row['C-index']:.4f}**  \n"
+        f"**Best model: {best_row['Model']}** â€” C-index = **{best_row['C-index']:.4f}**  \n"
         f"Integrated Brier Score (RSF): **{cohort_summary['ibs_rsf']:.4f}**  "
         f"*(lower is better, 0.25 = random)*"
     )
 
     col1, col2 = st.columns([2, 1])
 
-    # ── C-index bar chart
+    # â”€â”€ C-index bar chart
     with col1:
         bar_colors = [
             COLORS["accent"] if row["Model"] != best_row["Model"] else COLORS["teal"]
@@ -522,14 +528,14 @@ elif "Model" in section:
         fig_ci.add_vline(x=0.5, line_dash="dot", line_color="gray",
                          annotation_text="Random (0.5)", annotation_position="bottom right")
         fig_ci.update_layout(
-            title="Model Comparison — Concordance Index (Test Set)",
+            title="Model Comparison â€” Concordance Index (Test Set)",
             xaxis=dict(title="C-index", range=[0.45, 0.88]),
             yaxis=dict(title=""),
             **PLOTLY_LAYOUT,
         )
-        st.plotly_chart(fig_ci, use_container_width=True)
+        st.plotly_chart(fig_ci, width='stretch')
 
-    # ── Metrics table
+    # â”€â”€ Metrics table
     with col2:
         st.markdown("#### Detailed Metrics")
         metrics_df = model_comp.copy()
@@ -538,7 +544,7 @@ elif "Model" in section:
         metrics_df["C-index"] = metrics_df["C-index"].map("{:.4f}".format)
         st.dataframe(
             metrics_df[["Rank", "Model", "C-index"]],
-            use_container_width=True,
+            width='stretch',
             hide_index=True,
         )
 
@@ -547,9 +553,9 @@ elif "Model" in section:
 | C-index | Interpretation |
 |---------|---------------|
 | 1.0     | Perfect        |
-| 0.8–1.0 | Excellent      |
-| 0.7–0.8 | Good           |
-| 0.6–0.7 | Moderate       |
+| 0.8â€“1.0 | Excellent      |
+| 0.7â€“0.8 | Good           |
+| 0.6â€“0.7 | Moderate       |
 | 0.5     | Random         |
 """)
 
@@ -563,7 +569,7 @@ elif "Model" in section:
                 "(age, gender, stage). Assumes proportional hazards. Interpretable hazard ratios."
             )
     with exp2:
-        with st.expander("LASSO Cox ⭐"):
+        with st.expander("LASSO Cox â­"):
             st.markdown(
                 "**L1-penalized Cox regression** on clinical + 2000 top-variance genes. "
                 "Automatically selects sparse set of predictive features. Best overall C-index."
@@ -577,14 +583,14 @@ elif "Model" in section:
     with exp4:
         with st.expander("DeepSurv"):
             st.markdown(
-                "**Deep learning** MLP (128→64→1) trained with Cox partial likelihood loss "
+                "**Deep learning** MLP (128â†’64â†’1) trained with Cox partial likelihood loss "
                 "(PyTorch). 100 epochs. Captures complex patterns in high-dimensional expression data."
             )
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# SECTION 4 — GENE IMPORTANCE
-# ═══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# SECTION 4 â€” GENE IMPORTANCE
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 elif "Gene" in section:
     st.header("🔬 Gene Importance")
 
@@ -595,7 +601,7 @@ elif "Gene" in section:
          "Overlap Analysis", "Full Table"]
     )
 
-    # ── LASSO top features
+    # â”€â”€ LASSO top features
     with tab_lasso:
         top_lasso = pd.concat([
             lasso_coef.nlargest(top_n, "coefficient"),
@@ -620,13 +626,13 @@ elif "Gene" in section:
             height=max(400, top_n * 22),
             **PLOTLY_LAYOUT,
         )
-        st.plotly_chart(fig_l, use_container_width=True)
+        st.plotly_chart(fig_l, width='stretch')
         st.caption(
-            "🔴 **Red bars** → positive coefficient → higher risk of death  \n"
-            "🟢 **Green bars** → negative coefficient → protective factor"
+            "ðŸ”´ **Red bars** â†’ positive coefficient â†’ higher risk of death  \n"
+            "ðŸŸ¢ **Green bars** â†’ negative coefficient â†’ protective factor"
         )
 
-    # ── RSF top features
+    # â”€â”€ RSF top features
     with tab_rsf:
         rsf_top_n = rsf_imp.nlargest(top_n, "importance")
         fig_rsf = go.Figure(go.Bar(
@@ -637,16 +643,16 @@ elif "Gene" in section:
             marker_line=dict(color="white", width=0.5),
         ))
         fig_rsf.update_layout(
-            title=f"Top {top_n} Features — RSF Permutation Importance",
+            title=f"Top {top_n} Features â€” RSF Permutation Importance",
             xaxis_title="Permutation Importance",
             yaxis=dict(title="", tickfont=dict(size=11), autorange="reversed"),
             height=max(400, top_n * 22),
             **PLOTLY_LAYOUT,
         )
-        st.plotly_chart(fig_rsf, use_container_width=True)
+        st.plotly_chart(fig_rsf, width='stretch')
         st.caption("Permutation importance: how much the C-index drops when this feature is randomly shuffled.")
 
-    # ── Overlap analysis
+    # â”€â”€ Overlap analysis
     with tab_overlap:
         lasso_genes = set(gene_imp["lasso_top_genes"].keys())
         rsf_genes   = set(gene_imp["rsf_top_genes"].keys())
@@ -671,7 +677,7 @@ elif "Gene" in section:
             yaxis_title="Number of Genes",
             **PLOTLY_LAYOUT,
         )
-        st.plotly_chart(fig_venn_bar, use_container_width=True)
+        st.plotly_chart(fig_venn_bar, width='stretch')
 
         if overlap:
             st.markdown("**Genes identified by both models:**")
@@ -680,9 +686,9 @@ elif "Gene" in section:
                 "LASSO coefficient": [gene_imp["lasso_top_genes"].get(g, 0) for g in sorted(overlap)],
                 "RSF importance":   [gene_imp["rsf_top_genes"].get(g, 0) for g in sorted(overlap)],
             })
-            st.dataframe(overlap_df, use_container_width=True, hide_index=True)
+            st.dataframe(overlap_df, width='stretch', hide_index=True)
 
-    # ── Full searchable table
+    # â”€â”€ Full searchable table
     with tab_table:
         combined = lasso_coef.copy()
         combined["rsf_importance"] = rsf_imp["importance"]
@@ -695,12 +701,12 @@ elif "Gene" in section:
             combined = combined[
                 combined["Feature"].str.contains(search, case=False, na=False)
             ]
-        st.dataframe(combined, use_container_width=True, hide_index=True)
+        st.dataframe(combined, width='stretch', hide_index=True)
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
-# SECTION 5 — RISK PREDICTION DEMO
-# ═══════════════════════════════════════════════════════════════════════════════
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# SECTION 5 â€” RISK PREDICTION DEMO
+# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 elif "Risk" in section:
     st.header("⚕️ Risk Prediction Demo")
     st.markdown(
@@ -752,11 +758,11 @@ elif "Risk" in section:
 
             ratio = partial_hazard / ref_hazard
             if ratio < 0.5:
-                colour = "🟢"; label = "Low Risk"
+                colour = "ðŸŸ¢"; label = "Low Risk"
             elif ratio < 1.5:
-                colour = "🟡"; label = "Moderate Risk"
+                colour = "ðŸŸ¡"; label = "Moderate Risk"
             else:
-                colour = "🔴"; label = "High Risk"
+                colour = "ðŸ”´"; label = "High Risk"
 
             st.metric("Partial Hazard", f"{partial_hazard:.4f}")
             st.markdown(
@@ -765,7 +771,7 @@ elif "Risk" in section:
                 f"{colour} <b>{label}</b></div>",
                 unsafe_allow_html=True,
             )
-            st.caption(f"Relative to median patient (hazard ratio vs. reference = {ratio:.2f}×)")
+            st.caption(f"Relative to median patient (hazard ratio vs. reference = {ratio:.2f}Ã—)")
 
         with col_out:
             st.markdown("#### Predicted Survival Curve")
@@ -823,7 +829,7 @@ elif "Risk" in section:
                 legend=dict(x=0.65, y=0.95),
                 **PLOTLY_LAYOUT,
             )
-            st.plotly_chart(fig_pred, use_container_width=True)
+            st.plotly_chart(fig_pred, width='stretch')
 
             # Survival probability table
             landmarks = [90, 180, 365, 730, 1095, 1460, 1825]
@@ -836,13 +842,14 @@ elif "Risk" in section:
                                  "Predicted Survival": f"{surv[idx]:.1%}"})
             if rows:
                 st.markdown("#### Landmark Survival Probabilities")
-                st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+                st.dataframe(pd.DataFrame(rows), width='stretch', hide_index=True)
 
 
-# ─── Footer ──────────────────────────────────────────────────────────────────
+# â”€â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 st.divider()
 st.caption(
     "**Data source:** The Cancer Genome Atlas (TCGA-KIRC), GDC Data Portal &nbsp;|&nbsp; "
-    "**Pipeline:** lifelines · scikit-survival · PyTorch &nbsp;|&nbsp; "
+    "**Pipeline:** lifelines Â· scikit-survival Â· PyTorch &nbsp;|&nbsp; "
     "**Dashboard:** Streamlit + Plotly"
 )
+
