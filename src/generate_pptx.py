@@ -454,7 +454,7 @@ def slide_10_references(prs):
         (0, "1.  The Cancer Genome Atlas (TCGA) — GDC Data Portal\n"
             "     https://portal.gdc.cancer.gov/"),
         (0, "2.  Project GitHub Repository:\n"
-            "     https://github.com/[USERNAME]/tcga-kirc-project"),
+            "     https://github.com/LikithaDudala/tcga-kirc-project"),
 
         {"h": "Libraries & Frameworks"},
         (0, "3.  Davidson-Pilon C. (2019). lifelines: survival analysis in Python. "
@@ -505,7 +505,7 @@ def slide_11_thankyou(prs):
     lines = [
         "[STUDENT NAME]  ·  [COLLEGE]  ·  [DEPARTMENT]",
         "[EMAIL]",
-        "GitHub:  https://github.com/[USERNAME]/tcga-kirc-project",
+        "GitHub:  https://github.com/LikithaDudala/tcga-kirc-project",
     ]
     first = True
     for line in lines:
