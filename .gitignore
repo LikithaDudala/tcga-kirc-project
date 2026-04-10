@@ -29,7 +29,9 @@ data/*.tsv
 
 # Output artifacts — large/generated files not for version control
 outputs/figures/
-outputs/models/
+# Model files are committed (Streamlit Cloud needs them at runtime)
+outputs/models/*.pt.bak
+outputs/models/*.pkl.bak
 
 # Temp files
 _inspect.py
