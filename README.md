@@ -1,4 +1,4 @@
-# TCGA KIRC — Survival Analysis
+# Survival Prediction in TCGA-KIRC Using Multi-Model Machine Learning
 
 > **Kidney Renal Clear Cell Carcinoma** survival prediction using multi-model machine learning on TCGA genomic + clinical data.
 
@@ -12,7 +12,7 @@
 
 ## Overview
 
-This project builds a complete survival analysis pipeline for TCGA-KIRC (kidney renal clear cell carcinoma):
+This project builds a complete survival prediction pipeline for TCGA-KIRC (kidney renal clear cell carcinoma):
 
 - **529 patients** from The Cancer Genome Atlas (TCGA)
 - **4 survival models**: Cox PH, LASSO-penalized Cox, Random Survival Forest, DeepSurv

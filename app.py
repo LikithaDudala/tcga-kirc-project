@@ -1,15 +1,15 @@
 """
-TCGA KIRC Survival Analysis — Streamlit Dashboard
+Survival Prediction in TCGA-KIRC Using Multi-Model Machine Learning - Streamlit Dashboard
 ==================================================
 Single-page interactive dashboard for exploring the TCGA Kidney Renal
 Clear Cell Carcinoma (KIRC) survival analysis pipeline results.
 
 Sections:
-  1. Dataset Overview       — cohort statistics & demographics
-  2. Kaplan-Meier Curves    — overall and by cancer stage
-  3. Model Performance      — C-index comparison & Brier score
-  4. Gene Importance        — LASSO Cox & RSF top biomarkers
-  5. Risk Prediction Demo   — clinical input → predicted risk score
+    1. Dataset Overview       - cohort statistics and demographics
+    2. Kaplan-Meier Curves    - overall and by cancer stage
+    3. Model Performance      - C-index comparison and Brier score
+    4. Gene Importance        - LASSO Cox and RSF top biomarkers
+    5. Risk Prediction Demo   - clinical input to predicted risk score
 
 Run with:  streamlit run app.py
 """
@@ -31,7 +31,7 @@ warnings.filterwarnings("ignore")
 
 # ─── Page Configuration ──────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="TCGA KIRC Survival Analysis",
+    page_title="Survival Prediction in TCGA-KIRC",
     page_icon="https://img.icons8.com/color/96/dna-helix.png",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -151,8 +151,8 @@ with st.sidebar:
         width='stretch',
     ) if False else None  # skip external image fetch in offline env
 
-    st.markdown("## 🧬 TCGA KIRC")
-    st.markdown("**Kidney Renal Clear Cell Carcinoma**  \nSurvival Analysis Dashboard")
+    st.markdown("## 🧬 TCGA-KIRC")
+    st.markdown("**Survival Prediction in TCGA-KIRC**  \nMulti-Model Machine Learning")
     st.divider()
 
     st.markdown("### Navigation")
@@ -165,16 +165,16 @@ with st.sidebar:
 
     st.divider()
     st.caption("**Dataset:** TCGA-KIRC (GDC Portal)  \n"
-               "**Pipeline:** Cox PH · LASSO Cox · RSF · DeepSurv  \n"
+               "**Pipeline:** Cox PH | LASSO Cox | RSF | DeepSurv  \n"
                "**Metric:** Concordance Index (C-index)")
 
 
 # ─── Load Data ───────────────────────────────────────────────────────────────
 
-with st.spinner("Loading results…"):
+with st.spinner("Loading results..."):
     cohort_summary, model_comp, gene_imp, lasso_coef, rsf_imp, feat_info, model_res = load_results()
 
-with st.spinner("Loading clinical data…"):
+with st.spinner("Loading clinical data..."):
     clinical = load_clinical()
 
 cph_model, scaler = load_models()
@@ -182,20 +182,20 @@ cph_model, scaler = load_models()
 
 # ─── Main Header ─────────────────────────────────────────────────────────────
 st.markdown(
-    "<h1 style='color:#2c3e50;margin-bottom:0'>TCGA KIRC — Survival Analysis Dashboard</h1>",
+    "<h1 style='color:#2c3e50;margin-bottom:0'>Survival Prediction in TCGA-KIRC Using Multi-Model Machine Learning</h1>",
     unsafe_allow_html=True,
 )
 st.markdown(
-    "<p style='color:#7f8c8d;margin-top:4px'>Kidney Renal Clear Cell Carcinoma · "
-    "Multi-model survival analysis · TCGA cohort</p>",
+    "<p style='color:#7f8c8d;margin-top:4px'>Kidney Renal Clear Cell Carcinoma | "
+    "Multi-model survival analysis | TCGA cohort</p>",
     unsafe_allow_html=True,
 )
 st.divider()
 
 
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# =============================================================================
 # SECTION 1 — DATASET OVERVIEW
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# =============================================================================
 if "Overview" in section:
     st.header("📊 Dataset Overview")
 
@@ -328,9 +328,9 @@ if "Overview" in section:
     st.plotly_chart(fig_time, width='stretch')
 
 
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# =============================================================================
 # SECTION 2 — KAPLAN-MEIER CURVES
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# =============================================================================
 elif "Kaplan" in section:
     st.header("📈 Kaplan-Meier Survival Curves")
 
@@ -440,16 +440,16 @@ elif "Kaplan" in section:
             st.dataframe(pd.DataFrame(summary_rows), width='stretch', hide_index=True)
 
 
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# =============================================================================
 # SECTION 3 — MODEL PERFORMANCE
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# =============================================================================
 elif "Model" in section:
     st.header("🏆 Model Performance")
 
     # Best model callout
     best_row = model_comp.loc[model_comp["C-index"].idxmax()]
     st.success(
-        f"**Best model: {best_row['Model']}** — C-index = **{best_row['C-index']:.4f}**  \n"
+        f"**Best model: {best_row['Model']}** - C-index = **{best_row['C-index']:.4f}**  \n"
         f"Integrated Brier Score (RSF): **{cohort_summary['ibs_rsf']:.4f}**  "
         f"*(lower is better, 0.25 = random)*"
     )
@@ -474,7 +474,7 @@ elif "Model" in section:
         fig_ci.add_vline(x=0.5, line_dash="dot", line_color="gray",
                          annotation_text="Random (0.5)", annotation_position="bottom right")
         fig_ci.update_layout(
-            title="Model Comparison — Concordance Index (Test Set)",
+            title="Model Comparison - Concordance Index (Test Set)",
             xaxis=dict(title="C-index", range=[0.45, 0.88]),
             yaxis=dict(title=""),
             **PLOTLY_LAYOUT,
@@ -499,9 +499,9 @@ elif "Model" in section:
 | C-index | Interpretation |
 |---------|---------------|
 | 1.0     | Perfect        |
-| 0.8–1.0 | Excellent      |
-| 0.7–0.8 | Good           |
-| 0.6–0.7 | Moderate       |
+| 0.8-1.0 | Excellent      |
+| 0.7-0.8 | Good           |
+| 0.6-0.7 | Moderate       |
 | 0.5     | Random         |
 """)
 
@@ -515,7 +515,7 @@ elif "Model" in section:
                 "(age, gender, stage). Assumes proportional hazards. Interpretable hazard ratios."
             )
     with exp2:
-        with st.expander("LASSO Cox â­"):
+        with st.expander("LASSO Cox (best)"):
             st.markdown(
                 "**L1-penalized Cox regression** on clinical + 2000 top-variance genes. "
                 "Automatically selects sparse set of predictive features. Best overall C-index."
@@ -534,9 +534,9 @@ elif "Model" in section:
             )
 
 
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# =============================================================================
 # SECTION 4 — GENE IMPORTANCE
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# =============================================================================
 elif "Gene" in section:
     st.header("🔬 Gene Importance")
 
@@ -650,9 +650,9 @@ elif "Gene" in section:
         st.dataframe(combined, width='stretch', hide_index=True)
 
 
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# =============================================================================
 # SECTION 5 — RISK PREDICTION DEMO
-# â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+# =============================================================================
 elif "Risk" in section:
     st.header("⚕️ Risk Prediction Demo")
     st.markdown(
