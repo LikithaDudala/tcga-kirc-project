@@ -3,8 +3,10 @@
 > **Kidney Renal Clear Cell Carcinoma** survival prediction using multi-model machine learning on TCGA genomic + clinical data.
 
 [![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org)
-[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red)](https://streamlit.io)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Live%20App-red)](https://tcga-kirc.streamlit.app/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
+**Live App:** [https://tcga-kirc.streamlit.app/](https://tcga-kirc.streamlit.app/)
 
 ---
 
@@ -126,6 +128,10 @@ This trains all models and saves outputs to `outputs/` (takes ~10–15 minutes).
 ---
 
 ## Running the Dashboard
+
+**Live hosted app:** [https://tcga-kirc.streamlit.app/](https://tcga-kirc.streamlit.app/)
+
+Or run locally:
 
 ```bash
 streamlit run app.py
