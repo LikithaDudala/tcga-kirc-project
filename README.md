@@ -30,8 +30,7 @@ tcga-kirc-project/
 │   ├── follow_up.tsv                   # Follow-up records
 │   └── kirc_expression.tsv             # RNA-seq expression matrix (20,530 genes × 606 samples)
 ├── notebooks/
-│   ├── 01_data_check.ipynb             # Data exploration & shape inspection
-│   ├── 02_id_alignment.ipynb           # Patient ID alignment across datasets
+│   ├── 00_data_exploration.ipynb          # Data load, shape inspection & patient ID alignment
 │   └── 03_survival_analysis_report.ipynb  # Full analysis report (main deliverable)
 ├── outputs/
 │   └── results/                        # Pre-computed results (JSON / CSV)
@@ -40,9 +39,11 @@ tcga-kirc-project/
 │       ├── model_results.json
 │       ├── gene_importance.json
 │       ├── lasso_coefficients.csv
+│       ├── patient_survival.csv
 │       └── rsf_feature_importance.csv
 └── src/
-    └── pipeline.py                     # Standalone pipeline script
+    ├── pipeline.py                     # Standalone end-to-end pipeline script
+    └── generate_pptx.py                # PowerPoint report generator
 ```
 
 ---
@@ -147,10 +148,12 @@ Open [http://localhost:8501](http://localhost:8501) in your browser.
 ## Running the Notebooks
 
 ```bash
+# Full analysis report (main deliverable — trains models, saves all outputs)
 jupyter notebook notebooks/03_survival_analysis_report.ipynb
-```
 
-The report notebook runs end-to-end and produces all visualizations.
+# Data exploration (optional — load/inspect raw files, verify patient ID overlap)
+jupyter notebook notebooks/00_data_exploration.ipynb
+```
 
 ---
 

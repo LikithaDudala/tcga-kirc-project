@@ -35,7 +35,14 @@ outputs/models/*.pkl.bak
 
 # Temp files
 _inspect.py
+_gen_patient_csv.py
 *.tmp
+~$*.pptx
+~$*.docx
+~$*.xlsx
 
 # Non-production artifacts
 non_production_artifacts/
+
+# Reference / template files
+sample_deliverables/
