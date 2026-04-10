@@ -1,0 +1,6 @@
+{
+  "Cox PH (clinical)": 0.7808613891416439,
+  "LASSO Cox": 0.8046709129511678,
+  "Random Survival Forest": 0.716105550500455,
+  "DeepSurv": 0.7637245981195026
+}

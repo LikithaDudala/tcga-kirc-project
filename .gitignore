@@ -1,0 +1,39 @@
+# Virtual environments
+.venv/
+.venv-1/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Data files (too large for git)
+data/*.tsv
+
+# Output artifacts — large/generated files not for version control
+outputs/figures/
+outputs/models/
+
+# Temp files
+_inspect.py
+*.tmp
+
+# Non-production artifacts
+non_production_artifacts/

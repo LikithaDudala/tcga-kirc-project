@@ -1,0 +1,8 @@
+{
+  "total_patients": 529,
+  "events_dead": 173,
+  "censored_alive": 356,
+  "median_time_days": 1191.0,
+  "num_genes": 2000,
+  "ibs_rsf": 0.154197596880062
+}
