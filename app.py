@@ -63,7 +63,6 @@ PLOTLY_LAYOUT = dict(
 
 # ─── Paths ───────────────────────────────────────────────────────────────────
 ROOT       = Path(__file__).parent
-DATA_DIR   = ROOT / "data"
 RESULTS    = ROOT / "outputs" / "results"
 MODELS_DIR = ROOT / "outputs" / "models"
 
@@ -87,63 +86,10 @@ def load_results():
 
 @st.cache_data(show_spinner=False)
 def load_clinical():
-    """Load and pre-process clinical data for KM curves and demographics."""
-    clinical = pd.read_csv(DATA_DIR / "clinical.tsv", sep="\t")
-    clinical = clinical.replace("'--", np.nan)
-    clinical = clinical.drop_duplicates(subset="cases.submitter_id", keep="first")
-
-    # Survival target
-    clinical["days_to_death"] = pd.to_numeric(
-        clinical["demographic.days_to_death"], errors="coerce"
-    )
-    clinical["days_to_fup"] = pd.to_numeric(
-        clinical["diagnoses.days_to_last_follow_up"], errors="coerce"
-    )
-    clinical["event"] = (clinical["demographic.vital_status"] == "Dead").astype(int)
-    clinical["time"] = np.where(
-        clinical["event"] == 1, clinical["days_to_death"], clinical["days_to_fup"]
-    )
-
-    # Follow-up supplement from follow_up.tsv
-    try:
-        fu = pd.read_csv(DATA_DIR / "follow_up.tsv", sep="\t").replace("'--", np.nan)
-        fu["days_val"] = pd.to_numeric(
-            fu.get("follow_ups.days_to_follow_up", pd.Series(dtype=float)), errors="coerce"
-        )
-        fu_max = fu.groupby("cases.submitter_id")["days_val"].max().reset_index()
-        fu_max.columns = ["cases.submitter_id", "fu_max"]
-        clinical = clinical.merge(fu_max, on="cases.submitter_id", how="left")
-        mask_fup = clinical["time"].isna() & (clinical["event"] == 0)
-        clinical.loc[mask_fup, "time"] = clinical.loc[mask_fup, "fu_max"]
-    except Exception:
-        pass
-
+    """Load pre-computed patient survival data (time, event, age, stage, gender)."""
+    csv_path = RESULTS / "patient_survival.csv"
+    clinical = pd.read_csv(csv_path)
     clinical = clinical[clinical["time"].notna() & (clinical["time"] > 0)].copy()
-
-    # Stage
-    def map_stage(val):
-        if pd.isna(val):
-            return np.nan
-        v = str(val).upper().replace(" ", "")
-        if "IV" in v:
-            return "Stage IV"
-        if "III" in v:
-            return "Stage III"
-        if "II" in v:
-            return "Stage II"
-        if "I" in v:
-            return "Stage I"
-        return np.nan
-
-    if "diagnoses.ajcc_pathologic_stage" in clinical.columns:
-        clinical["stage"] = clinical["diagnoses.ajcc_pathologic_stage"].map(map_stage)
-
-    # Age & gender
-    if "demographic.age_at_index" in clinical.columns:
-        clinical["age"] = pd.to_numeric(clinical["demographic.age_at_index"], errors="coerce")
-    if "demographic.gender" in clinical.columns:
-        clinical["gender"] = clinical["demographic.gender"].str.lower()
-
     return clinical
 
 
