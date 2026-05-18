@@ -69,7 +69,7 @@ This is normal in biomedical projects. The number becomes smaller step by step b
 Examples:
 
 - It mentions **5-fold CV**, but the current `pipeline.py` appears to choose LASSO alpha by checking C-index across alpha values on the held-out test split.
-- That is a methodology limitation and possible data-leakage risk.
+- That is a methodology limitation and possible data-leakage risk, because the test-set information influences model selection instead of remaining fully untouched for final evaluation.
 - In viva, present this as an audit observation and say a stricter version would tune alpha only inside the training data.
 - It mentions **200 trees** for RSF, but `pipeline.py` uses **300 trees**.
 - It mentions **200 epochs** for DeepSurv, but `pipeline.py` trains for **100 epochs**.
@@ -1662,7 +1662,7 @@ Provides a searchable feature table.
 
 #### How to demo
 
-Search for one overlap gene from the **current saved outputs**. Before viva, verify the exact gene names in `outputs/results/gene_importance.json`. If that file is missing, use the overlap table already shown inside the app or read the latest overlap list directly from the gene-importance section of your saved results. The exact overlap genes can change if the pipeline is rerun on a different split or updated data.
+To demonstrate this feature during viva, identify one overlap gene from the **current saved outputs** beforehand, ideally from `outputs/results/gene_importance.json`. If that file is missing, use the overlap table already shown inside the app or the latest overlap list from your saved results. The exact overlap genes can change if the pipeline is rerun on a different split or updated data.
 
 #### Likely questions for the whole page
 
@@ -2024,7 +2024,9 @@ Age, stage, and gender were the main clinical features in the current pipeline.
 ### Q9. What are the important genes?
 
 **Answer:**
-You can answer this generically first: the important genes are the ones that received strong LASSO coefficients or high RSF importance in the current saved outputs. If the examiner asks for examples, quickly verify the latest names from `outputs/results/gene_importance.json` and `outputs/results/lasso_coefficients.csv` before the viva.
+You can answer this generically first: the important genes are the ones that received strong LASSO coefficients or high RSF importance in the current saved outputs.
+
+For your own viva preparation, note a few example genes in advance from `outputs/results/gene_importance.json` and `outputs/results/lasso_coefficients.csv`, because the exact names can vary if the pipeline is rerun.
 
 ### Q10. Is this a clinical product?
 
