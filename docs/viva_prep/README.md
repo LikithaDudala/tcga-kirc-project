@@ -68,7 +68,7 @@ This is normal in biomedical projects. The number becomes smaller step by step b
 `src/generate_pptx.py` contains some hardcoded presentation text that does **not fully match** the current saved outputs and pipeline settings.
 Examples:
 
-- It mentions **5-fold CV**, but the current `pipeline.py` chooses LASSO alpha by checking test-set C-index across alpha values.
+- It mentions **5-fold CV**, but the current `pipeline.py` appears to choose LASSO alpha by checking C-index across alpha values on the held-out test split. That is a methodology limitation and possible data-leakage risk, so in viva you should present it as an audit observation and say a stricter version would tune alpha only inside the training data.
 - It mentions **200 trees** for RSF, but `pipeline.py` uses **300 trees**.
 - It mentions **200 epochs** for DeepSurv, but `pipeline.py` trains for **100 epochs**.
 - It mentions a **370/159 split**, but the saved train/test CSV files show **308 train / 133 test** for the modeling subset.
@@ -616,7 +616,7 @@ Step 1:
 Step 2:
 
 - Use LASSO Cox
-- Keep **40 non-zero selected features** according to saved outputs
+- Keep **40 non-zero selected features** according to saved outputs, where the 40 total selected features include **2 clinical features** (`stage_num`, `age`) and **38 gene features**
 
 ### Why it was done
 
@@ -1658,7 +1658,7 @@ Provides a searchable feature table.
 
 #### How to demo
 
-Search for one overlap gene such as `ITPKA` or `EREG`.
+Search for one overlap gene from the **current saved outputs**, for example `ITPKA` or `EREG`. Mention that overlap genes can change if the pipeline is rerun on a different split or updated data.
 
 #### Likely questions for the whole page
 
@@ -2397,7 +2397,7 @@ Read this section just before the viva.
 - Cancer type: **TCGA-KIRC**
 - Gene count before filtering: **20,530**
 - Variance-filtered genes: **2000**
-- LASSO-selected features: **40**
+- LASSO-selected features: **40 total = 2 clinical + 38 genes**
 - Final merged cohort reported in outputs: **529**
 - Modeling split saved in outputs: **308 train / 133 test**
 - Best model: **LASSO Cox**
