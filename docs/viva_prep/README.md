@@ -369,7 +369,7 @@ Clinical features alone may miss molecular patterns. Gene expression can reveal 
 
 ### How to say it in viva
 
-> “Gene expression data lets the model use molecular information, not just visible clinical features. This can improve risk prediction and help identify biomarkers.”
+> “Gene expression data lets the model use molecular information, not just standard clinical features. This can improve risk prediction and help identify biomarkers.”
 
 ---
 
@@ -1662,7 +1662,7 @@ Provides a searchable feature table.
 
 #### How to demo
 
-Search for one overlap gene from the **current saved outputs**. Before viva, verify the exact gene names in `outputs/results/gene_importance.json`, because overlap genes can change if the pipeline is rerun on a different split or updated data.
+Search for one overlap gene from the **current saved outputs**. Before viva, verify the exact gene names in `outputs/results/gene_importance.json`. If that file is missing, use the overlap table already shown inside the app or read the latest overlap list directly from the gene-importance section of your saved results. The exact overlap genes can change if the pipeline is rerun on a different split or updated data.
 
 #### Likely questions for the whole page
 
@@ -2024,7 +2024,7 @@ Age, stage, and gender were the main clinical features in the current pipeline.
 ### Q9. What are the important genes?
 
 **Answer:**
-Examples from the **current saved outputs** include C8orf47, C19orf77, PLEKHG4B, MUC5B, ITPKA, and EREG. Before viva, quickly verify these names against `outputs/results/gene_importance.json` and `outputs/results/lasso_coefficients.csv`.
+You can answer this generically first: the important genes are the ones that received strong LASSO coefficients or high RSF importance in the current saved outputs. If the examiner asks for examples, quickly verify the latest names from `outputs/results/gene_importance.json` and `outputs/results/lasso_coefficients.csv` before the viva.
 
 ### Q10. Is this a clinical product?
 
