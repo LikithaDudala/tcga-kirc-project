@@ -4,13 +4,13 @@ This document is a beginner-friendly but technically accurate viva guide for the
 
 - Repository: `LikithaDudala/tcga-kirc-project`
 - Main evidence reviewed for this guide:
-  - `/home/runner/work/tcga-kirc-project/tcga-kirc-project/README.md`
-  - `/home/runner/work/tcga-kirc-project/tcga-kirc-project/app.py`
-  - `/home/runner/work/tcga-kirc-project/tcga-kirc-project/src/pipeline.py`
-  - `/home/runner/work/tcga-kirc-project/tcga-kirc-project/src/generate_pptx.py`
-  - `/home/runner/work/tcga-kirc-project/tcga-kirc-project/notebooks/00_data_exploration.ipynb`
-  - `/home/runner/work/tcga-kirc-project/tcga-kirc-project/notebooks/01_survival_analysis_report.ipynb`
-  - `/home/runner/work/tcga-kirc-project/tcga-kirc-project/outputs/results/*`
+  - `README.md`
+  - `app.py`
+  - `src/pipeline.py`
+  - `src/generate_pptx.py`
+  - `notebooks/00_data_exploration.ipynb`
+  - `notebooks/01_survival_analysis_report.ipynb`
+  - `outputs/results/*`
 
 ---
 
@@ -519,7 +519,7 @@ The project needs both:
 
 ### What was done technically
 
-- TCGA missing sentinel values like `'--` were replaced with `NaN`.
+- TCGA missing sentinel values like `'--'` were replaced with `NaN`.
 - Duplicate clinical patient rows were removed using `cases.submitter_id`.
 - Survival fields were converted to numeric values.
 
@@ -1292,7 +1292,7 @@ The project is about time-to-event survival prediction, not simple classificatio
 
 # 6. Deployment / Streamlit App Walkthrough
 
-File: `/home/runner/work/tcga-kirc-project/tcga-kirc-project/app.py`
+File: `app.py`
 
 ## 6.1 App architecture summary
 
