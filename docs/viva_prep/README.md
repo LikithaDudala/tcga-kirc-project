@@ -65,7 +65,7 @@ This is normal in biomedical projects. The number becomes smaller step by step b
 
 ### 3. One more useful audit note
 
-`src/generate_pptx.py` contains some hardcoded presentation text that does **not fully match** the current saved outputs and pipeline settings.  
+`src/generate_pptx.py` contains some hardcoded presentation text that does **not fully match** the current saved outputs and pipeline settings.
 Examples:
 
 - It mentions **5-fold CV**, but the current `pipeline.py` chooses LASSO alpha by checking test-set C-index across alpha values.
@@ -144,7 +144,7 @@ If we can estimate risk better, doctors and researchers can:
 
 ### Technical definition
 
-**TCGA** stands for **The Cancer Genome Atlas**, which is a major public cancer dataset containing molecular and clinical information.  
+**TCGA** stands for **The Cancer Genome Atlas**, which is a major public cancer dataset containing molecular and clinical information.
 **TCGA-KIRC** is the kidney renal clear cell carcinoma cohort inside TCGA.
 
 ### Simple explanation
@@ -1979,52 +1979,52 @@ Simple meaning:
 
 ### Q1. What is the aim of your project?
 
-**Answer:**  
+**Answer:**
 To predict survival risk in TCGA-KIRC patients using clinical and gene expression data and compare multiple survival models.
 
 ### Q2. Why did you choose survival analysis instead of classification?
 
-**Answer:**  
+**Answer:**
 Because the target includes both event status and time, and many patients are censored.
 
 ### Q3. What is censoring?
 
-**Answer:**  
+**Answer:**
 It means the event was not observed within the follow-up period, but we still know the patient survived at least until the last recorded time.
 
 ### Q4. Which model performed best?
 
-**Answer:**  
+**Answer:**
 LASSO Cox with a test C-index of about 0.8047.
 
 ### Q5. Why did LASSO Cox perform best?
 
-**Answer:**  
+**Answer:**
 Because it handled high-dimensional genomic data well, selected a sparse set of informative features, and reduced overfitting.
 
 ### Q6. What metric did you use?
 
-**Answer:**  
+**Answer:**
 Mainly the Concordance Index, because it is appropriate for censored survival ranking.
 
 ### Q7. Why not use accuracy?
 
-**Answer:**  
+**Answer:**
 Accuracy ignores survival time and censoring, so it is not appropriate for this task.
 
 ### Q8. What are the important clinical features?
 
-**Answer:**  
+**Answer:**
 Age, stage, and gender were the main clinical features in the current pipeline.
 
 ### Q9. What are the important genes?
 
-**Answer:**  
+**Answer:**
 Examples from saved outputs include C8orf47, C19orf77, PLEKHG4B, MUC5B, ITPKA, and EREG.
 
 ### Q10. Is this a clinical product?
 
-**Answer:**  
+**Answer:**
 No. It is a research and educational prototype based on public retrospective data.
 
 ---
@@ -2033,42 +2033,42 @@ No. It is a research and educational prototype based on public retrospective dat
 
 ### Q1. What assumption does Cox PH make?
 
-**Answer:**  
+**Answer:**
 It assumes proportional hazards, meaning relative hazard ratios remain constant over time.
 
 ### Q2. How did you handle missing follow-up time for censored patients?
 
-**Answer:**  
+**Answer:**
 The pipeline looks into `follow_up.tsv` and uses the maximum available follow-up value when the clinical field is missing.
 
 ### Q3. Why use tumor-only samples?
 
-**Answer:**  
+**Answer:**
 Because survival prediction should be based on tumor biology rather than normal tissue expression.
 
 ### Q4. Why use variance filtering before LASSO?
 
-**Answer:**  
+**Answer:**
 It reduces the genomic feature space first, making downstream modeling more stable and computationally feasible.
 
 ### Q5. Why does the app use Cox PH instead of LASSO Cox?
 
-**Answer:**  
+**Answer:**
 The app accepts only simple clinical inputs. LASSO Cox also requires genomic inputs, which are not practical for quick manual entry.
 
 ### Q6. Why did RSF not outperform LASSO here?
 
-**Answer:**  
+**Answer:**
 Possible reasons include limited sample size, noise in high-dimensional biology, and the fact that sparse linear structure may already capture the strongest signal in this cohort.
 
 ### Q7. What is permutation importance?
 
-**Answer:**  
+**Answer:**
 It measures how much model performance drops when one feature is randomly shuffled. A bigger drop means the feature was more useful.
 
 ### Q8. Why is the risk score a relative value?
 
-**Answer:**  
+**Answer:**
 Because Cox-type models mainly rank patients by hazard rather than directly predicting an exact event time.
 
 ---
@@ -2103,22 +2103,22 @@ Use these exact lines if you get stuck.
 
 ### Q1. Why did you choose Streamlit?
 
-**Answer:**  
+**Answer:**
 Because it is simple, fast for data-science apps, and well suited for interactive visualizations and model demos.
 
 ### Q2. What is deployed in the app?
 
-**Answer:**  
+**Answer:**
 Saved results, precomputed analysis files, and a simple Cox-model-based risk prediction interface.
 
 ### Q3. Does the app retrain models live?
 
-**Answer:**  
+**Answer:**
 No. It loads pre-trained artifacts from `outputs/models` and precomputed result files from `outputs/results`.
 
 ### Q4. What are the limitations of this deployment?
 
-**Answer:**  
+**Answer:**
 It is a research demo, not a hospital-grade clinical system. It uses simplified inputs and has no external cohort validation inside the app.
 
 ---
